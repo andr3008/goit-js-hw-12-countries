@@ -1,15 +1,15 @@
-<div class='card'>
+<li class='card'>
 
-  <div>
+  <div class='card-list'>
     <h2 class='card-title'> {{name}}</h2>
     <p class='card-text'>Capital: {{capital}}</p>
     <p class='card-text'>Population: {{population}}</p>
     <p class='card-text'>Languages: </p>
-    {{#each languages}}
-      <ul>
+    <ul>{{#each languages}}
+
         <li class='card-text'>{{name}}</li>
-      </ul>
-    {{/each}}
+
+      {{/each}}</ul>
   </div>
-  <div><img src='{{flag}}' alt='{{name}}' /></div>
-</div>
+  <div><img class='card-img' src='{{flag}}' alt='{{name}}' width='200px' /></div>
+</li>

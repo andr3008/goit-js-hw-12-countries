@@ -1,27 +1,44 @@
 import './sass/main.scss';
-import countryCards from '../templates/temp.hbs';
 import API from './js/fetchCountries';
+
+import countryList from '../templates/countryListTemp.hbs';
+import countryCard from '../templates/countryTemp.hbs';
+
+import '@pnotify/core/dist/BrightTheme.css';
+const { error } = require('@pnotify/core');
+var debounce = require('lodash.debounce');
+
 import getRefs from './js/get-refs';
 const refs = getRefs();
-refs.inputSearch.addEventListener('submit', onSearch);
+refs.inputSearch.addEventListener('input', debounce(onSearch, 500));
 
 function onSearch(e) {
   e.preventDefault();
-  const form = e.currentTarget;
+  const searchQuery = e.target.value;
+  hideCountryList();
 
-  const searchQuery = form.elements.query.value;
-
-  API.fetchCountryByName(searchQuery)
-    .then(renderCountryCard)
-    .catch(onFetchError)
-    .finally(() => form.reset());
+  API.fetchCountries(searchQuery)
+    .then(onSearchQuery)
+    .catch(error => {
+      console.log(error);
+    });
 }
-
-function renderCountryCard(name) {
-  const markup = countryCards(name);
-  console.log(markup);
-  refs.cardContainer.innerHTML = markup;
+function onSearchQuery(searchList) {
+  if (searchList.length > 10) {
+    error({
+      text: 'Too many matches found. Please enter a more specific query!',
+      delay: 250,
+    });
+  } else if (searchList.length === 1) {
+    renderCountryList(searchList, countryCard);
+  } else if (searchList.length <= 10 || searchList.length >= 2) {
+    renderCountryList(searchList, countryList);
+  }
 }
-function onFetchError(error) {
-  console.log(error);
+function renderCountryList(countries, name) {
+  const markup = countries.map(country => name(country)).join(' ');
+  refs.cardContainer.insertAdjacentHTML('beforeend', markup);
+}
+function hideCountryList() {
+  refs.cardContainer.innerHTML = '';
 }

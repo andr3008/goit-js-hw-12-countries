@@ -1,6 +1,6 @@
 const BASE_URL = 'https://restcountries.com/v2';
 
-function fetchCountryByName(name) {
-  return fetch(`${BASE_URL}/name/${name}`).then(response => response.json());
+function fetchCountries(searchQuery) {
+  return fetch(`${BASE_URL}/name/${searchQuery}`).then(response => response.json());
 }
-export default { fetchCountryByName };
+export default { fetchCountries };
